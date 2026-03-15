@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { SkillsManager } from "@/components/admin/skills-manager";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminSkillsPage() {
   const skills = await prisma.skill.findMany({ orderBy: { order: "asc" } });
   return (

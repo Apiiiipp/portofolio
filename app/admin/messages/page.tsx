@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { MessagesTable } from "@/components/admin/messages-table";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminMessagesPage() {
   const messages = await prisma.contact.findMany({ orderBy: { createdAt: "desc" } });
 

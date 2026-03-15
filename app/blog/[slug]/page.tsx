@@ -12,6 +12,8 @@ interface Props {
   params: { slug: string };
 }
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!params?.slug) return { title: "Post Not Found" };
   const post = await prisma.post.findUnique({ where: { slug: params.slug } });
@@ -21,17 +23,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: post.excerpt,
     openGraph: { title: post.title, description: post.excerpt },
   };
-}
-
-export async function generateStaticParams() {
-  const posts = await prisma.post.findMany({
-    where: { published: true },
-    select: { slug: true },
-  });
-  return posts
-    .map((p) => p.slug)
-    .filter((slug): slug is string => typeof slug === "string" && slug.length > 0)
-    .map((slug) => ({ slug }));
 }
 
 export default async function BlogPostPage({ params }: Props) {

@@ -10,9 +10,11 @@ import { ContactSection } from "@/components/sections/contact";
 import { GitHubSection } from "@/components/sections/github";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const [projects, skills, posts, experience, siteConfigs] = await Promise.all([
-    prisma.project.findMany({ orderBy: { order: "asc" }, take: 6 }),
+    prisma.project.findMany({ orderBy: { order: "asc" } }),
     prisma.skill.findMany({ orderBy: { order: "asc" } }),
     prisma.post.findMany({
       where: { published: true },

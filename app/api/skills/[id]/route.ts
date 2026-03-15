@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -10,6 +11,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     }
     const body = await req.json();
     const skill = await prisma.skill.update({ where: { id }, data: body });
+    revalidatePath("/");
     return NextResponse.json(skill);
   } catch (error: any) {
     if (error?.code === "P2025") {
@@ -27,6 +29,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
       return NextResponse.json({ error: "Invalid id" }, { status: 400 });
     }
     await prisma.skill.delete({ where: { id } });
+    revalidatePath("/");
     return NextResponse.json({ success: true });
   } catch (error: any) {
     if (error?.code === "P2025") {

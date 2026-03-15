@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { ProjectsTable } from "@/components/admin/projects-table";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminProjectsPage() {
   const projects = await prisma.project.findMany({ orderBy: { order: "asc" } });
 

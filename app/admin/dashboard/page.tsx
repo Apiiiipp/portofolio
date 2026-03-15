@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { FolderKanban, FileText, Zap, Mail, Eye, TrendingUp } from "lucide-react";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminDashboardPage() {
   const [projectCount, postCount, skillCount, unreadMessages, totalViews, recentMessages] =
     await Promise.all([

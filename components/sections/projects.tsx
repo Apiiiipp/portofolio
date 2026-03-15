@@ -18,6 +18,22 @@ export function ProjectsSection({ projects }: { projects: Project[] }) {
   const [activeCategory, setActiveCategory] = useState("All");
   const { lang } = useLanguage();
 
+  const parseTechnologies = (value?: string | null) => {
+    if (!value) return [] as string[];
+    try {
+      const parsed = JSON.parse(value);
+      if (Array.isArray(parsed)) {
+        return parsed.map((item) => String(item)).filter(Boolean);
+      }
+    } catch {
+      // Fall back to comma-separated values.
+    }
+    return value
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean);
+  };
+
   const categoryLabels =
     lang === "id"
       ? {
@@ -91,7 +107,7 @@ export function ProjectsSection({ projects }: { projects: Project[] }) {
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-5">
           {filtered.map((project, i) => {
-            const techs: string[] = JSON.parse(project.technologies || "[]");
+            const techs = parseTechnologies(project.technologies);
             return (
               <motion.div
                 key={project.id}
