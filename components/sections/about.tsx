@@ -5,11 +5,32 @@ import { useRef, useState } from "react";
 import Image from "next/image";
 import { Code2, Database, GitBranch, Layers, MapPin, Calendar } from "lucide-react";
 
-const highlights = [
-  { icon: Code2,     label: "Backend Engineering" },
-  { icon: Database,  label: "Database Architecture" },
-  { icon: Layers,    label: "System Design" },
-  { icon: GitBranch, label: "Clean Code" },
+const iconMap = {
+  code: Code2,
+  database: Database,
+  layers: Layers,
+  git: GitBranch,
+};
+
+export type AboutContent = {
+  imageSrc?: string;
+  imageAlt?: string;
+  badge?: string;
+  stats?: { value: string; label: string }[];
+  location?: string;
+  availability?: string;
+  headline?: string;
+  subheadline?: string;
+  paragraphs?: string[];
+  highlights?: { label: string; icon?: keyof typeof iconMap }[];
+  techStack?: string[];
+};
+
+const highlights: { label: string; icon: keyof typeof iconMap }[] = [
+  { icon: "code", label: "Backend Engineering" },
+  { icon: "database", label: "Database Architecture" },
+  { icon: "layers", label: "System Design" },
+  { icon: "git", label: "Clean Code" },
 ];
 
 const techStack = [
@@ -23,10 +44,24 @@ const stats = [
   { value: "100%", label: "Commitment" },
 ];
 
-export function AboutSection() {
+export function AboutSection({ data }: { data?: AboutContent }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
   const [imageError, setImageError] = useState(false);
+
+  const resolvedStats = data?.stats?.length ? data.stats : stats;
+  const resolvedHighlights = data?.highlights?.length ? data.highlights : highlights;
+  const resolvedTechStack = data?.techStack?.length ? data.techStack : techStack;
+  const headline = data?.headline ?? "Membangun sistem";
+  const subheadline = data?.subheadline ?? "yang benar-benar berfungsi.";
+  const paragraphs =
+    data?.paragraphs?.length
+      ? data.paragraphs
+      : [
+          "Saya Hafif Saputra, seorang programmer dari Pekanbaru, Indonesia dengan fokus membangun sistem backend yang kuat dan mudah dirawat.",
+          "Pekerjaan saya meliputi sistem pengadaan enterprise, platform koperasi, dan alat pelaporan keuangan — semuanya dibuat dengan fokus pada integritas data, arsitektur yang bersih, dan kegunaan nyata.",
+          "Di luar menulis kode Laravel dan merancang skema MySQL, saya mengeksplorasi pola desain sistem dan berkontribusi pada proyek yang memecahkan masalah nyata bagi pengguna.",
+        ];
 
   return (
     <section id="about" className="py-24 sm:py-32" ref={ref}>
@@ -62,8 +97,8 @@ export function AboutSection() {
               <div className="relative w-64 h-80 sm:w-72 sm:h-[360px] rounded-2xl overflow-hidden border border-border bg-secondary">
                 {/* Placeholder — replace src with your actual photo path */}
                 <Image
-                  src="/images/programmer.jpeg"
-                  alt="Hafif Saputra"
+                  src={data?.imageSrc || "/images/programmer.jpeg"}
+                  alt={data?.imageAlt || "Hafif Saputra"}
                   fill
                   sizes="(max-width: 640px) 16rem, 18rem"
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -93,7 +128,7 @@ export function AboutSection() {
                 className="absolute -bottom-4 -right-4 flex items-center gap-2 px-3 py-2 rounded-xl border border-border bg-card/90 backdrop-blur-sm shadow-lg text-xs font-mono"
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Open to work
+                {data?.badge || "Open to work"}
               </motion.div>
             </div>
 
@@ -104,7 +139,7 @@ export function AboutSection() {
               transition={{ duration: 0.5, delay: 0.5 }}
               className="flex items-center gap-6 pt-4"
             >
-              {stats.map(({ value, label }) => (
+              {resolvedStats.map(({ value, label }) => (
                 <div key={label} className="text-center">
                   <p className="text-2xl font-display font-bold">{value}</p>
                   <p className="text-xs text-muted-foreground font-mono mt-0.5">{label}</p>
@@ -121,11 +156,11 @@ export function AboutSection() {
             >
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <MapPin size={12} />
-                <span>Pekanbaru, Riau, Indonesia</span>
+                <span>{data?.location || "Pekanbaru, Riau, Indonesia"}</span>
               </div>
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <Calendar size={12} />
-                <span>Available for freelance & full-time</span>
+                <span>{data?.availability || "Available for freelance & full-time"}</span>
               </div>
             </motion.div>
           </motion.div>
@@ -138,35 +173,23 @@ export function AboutSection() {
             className="flex flex-col gap-6"
           >
             <h2 className="text-3xl sm:text-4xl font-display font-bold tracking-tight leading-tight">
-              Membangun sistem
+              {headline}
               <br />
-              <span className="text-muted-foreground/50">yang benar-benar berfungsi.</span>
+              <span className="text-muted-foreground/50">{subheadline}</span>
             </h2>
 
             {/* Paragraphs */}
             <div className="space-y-4 text-muted-foreground leading-relaxed text-sm sm:text-base">
-              <p>
-                Saya <span className="text-foreground font-medium">Hafif Saputra</span>, seorang
-                programmer dari Pekanbaru, Indonesia dengan fokus membangun sistem backend yang
-                kuat dan mudah dirawat.
-              </p>
-              <p>
-                Pekerjaan saya meliputi sistem pengadaan enterprise, platform koperasi, dan alat
-                pelaporan keuangan — semuanya dibuat dengan fokus pada{" "}
-                <span className="text-foreground">integritas data</span>,{" "}
-                <span className="text-foreground">arsitektur yang bersih</span>, dan kegunaan
-                nyata.
-              </p>
-              <p>
-                Di luar menulis kode Laravel dan merancang skema MySQL, saya mengeksplorasi pola
-                desain sistem dan berkontribusi pada proyek yang memecahkan masalah nyata bagi
-                pengguna.
-              </p>
+              {paragraphs.map((paragraph, index) => (
+                <p key={`${paragraph.slice(0, 12)}-${index}`}>{paragraph}</p>
+              ))}
             </div>
 
             {/* Highlight cards */}
             <div className="grid grid-cols-2 gap-3 mt-2">
-              {highlights.map(({ icon: Icon, label }, i) => (
+              {resolvedHighlights.map(({ icon, label }, i) => {
+                const Icon = iconMap[icon || "code"] || Code2;
+                return (
                 <motion.div
                   key={label}
                   initial={{ opacity: 0, y: 14 }}
@@ -177,7 +200,8 @@ export function AboutSection() {
                   <Icon size={14} className="text-emerald-400 shrink-0" />
                   <span className="text-xs font-medium leading-tight">{label}</span>
                 </motion.div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Tech stack */}
@@ -186,7 +210,7 @@ export function AboutSection() {
                 Tech Stack
               </p>
               <div className="flex flex-wrap gap-2">
-                {techStack.map((tech, i) => (
+                {resolvedTechStack.map((tech, i) => (
                   <motion.span
                     key={tech}
                     initial={{ opacity: 0, scale: 0.85 }}
