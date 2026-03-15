@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -80,7 +80,7 @@ model Post {
   category    String    @default("General")
   slug        String    @unique
   excerpt     String    @db.Text
-  content     String    @db.LongText
+  content     String    @db.Text
   cover       String?
   published   Boolean   @default(false)
   featured    Boolean   @default(false)
